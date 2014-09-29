@@ -1,1 +1,1 @@
-./libFM -task c -train train_2000.libfm -test emptyfile -dim '0,0,8' -iter 100
+./libFM -task c -train train_2000.libfm -test emptyfile -dim '0,0,8' -iter 100 -imp_file importance.feature_2d

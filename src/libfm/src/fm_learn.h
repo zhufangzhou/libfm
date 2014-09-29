@@ -52,7 +52,6 @@ class fm_learn {
  
 		Data* validation;	
 
-
 		RLog* log;
 
 		fm_learn() { log = NULL; task = 0; meta = NULL;} 
@@ -108,24 +107,50 @@ class fm_learn {
 			std::cout << "max_target=" << max_target << std::endl;		
 		}
 
-		void feature_selection_2dim() {
-			FILE *fp = fopen("importance.feature_2d", "w");
+		void feature_selection_2dim(std::string filename) {
+			FILE *fp;
 			int k_dim, n_dim;
+			int* idx_list, size;
 			double** v = fm->v.value;
+			double* v_sum;
+
 			k_dim = fm->v.dim1;
 			n_dim = fm->v.dim2;
 
-			double* v_sum;
-			v_sum = new double[(1+n_dim)*n_dim/2];
+			if( (fp = fopen(filename.c_str(), "w")) == NULL) {
+				throw "can't not open file " + filename; 
+			}
+
+			size = (1+n_dim)*n_dim/2;
+			MemoryLog::getInstance().logNew("v_sum", sizeof(double), size);
+			v_sum = new double[size];
+			MemoryLog::getInstance().logNew("idx_list", sizeof(int), size*2);
+			idx_list = new int[size*2];
+
 			int counts = 0;
 			for (int i = 0; i < n_dim; i++) {
 				for (int j = i; j < n_dim; j++) {
 					v_sum[counts] = inner_prod(v, k_dim, i, j);
-					fprintf(fp, "%lf\t%d\t%d\n", v_sum[counts], i, j);
+					idx_list[counts*2] = i;
+					idx_list[counts*2+1] = j;
 					counts++;
 				}
 			}
+
+			MemoryLog::getInstance().logNew("order", sizeof(int), size);			
+			int *order = argsort(v_sum, size, DESC);
+
+			for (int i = 0; i < size; i++) {
+				fprintf(fp, "%lf\t%d\t%d\n", v_sum[order[i]], idx_list[order[i]*2], idx_list[order[i]*2+1]);
+			}
+
+			MemoryLog::getInstance().logFree("v_sum", sizeof(double), size);
 			delete[] v_sum;
+			MemoryLog::getInstance().logFree("idx_list", sizeof(int), size*2);
+			delete[] idx_list;
+			MemoryLog::getInstance().logFree("order", sizeof(int), size);
+			delete[] order;
+			
 			fclose(fp);
 		}
 

@@ -97,6 +97,7 @@ int main(int argc, char **argv) {
 
 		const std::string param_cache_size = cmdline.registerParameter("cache_size", "cache size for data storage (only applicable if data is in binary format), default=infty");
 
+		const std::string param_2way_interaction_file = cmdline.registerParameter("imp_file", "filename for 2-way interaction importance");
 
 		const std::string param_do_sampling	= "do_sampling";
 		const std::string param_do_multilevel	= "do_multilevel";
@@ -387,7 +388,9 @@ int main(int argc, char **argv) {
 		// () learn		
 		fml->learn(train, test);
 
-		fml->feature_selection_2dim();
+		// () save feature selection result
+		if (cmdline.hasParameter(param_2way_interaction_file))
+			fml->feature_selection_2dim(cmdline.getValue(param_2way_interaction_file));
 
 		// () Prediction at the end  (not for mcmc and als)
 		if (cmdline.getValue(param_method).compare("mcmc")) {

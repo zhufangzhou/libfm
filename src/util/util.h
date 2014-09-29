@@ -46,6 +46,9 @@ namespace std {
 }
 #endif
 
+#define ASC 1
+#define DESC -1
+
 double sqr(double d) { return d*d; }
 
 double sigmoid(double d) { return (double)1.0/(1.0+exp(-d)); }
@@ -94,4 +97,61 @@ bool fileexists(std::string filename) {
 }
 
 
+template <class T>
+T* ordered_sequence(T size, T *idx = NULL, T start_from = 0) {
+	// T *idx = new T[size];
+	if (idx == NULL) {
+		idx = new T[size];
+	}
+	for (T i = 0; i < size; i++) idx[i] = i + start_from;
+	return idx;
+}
+
+template <class T>
+int* argsort(T *arr, int size, int asc = ASC) {
+	int st_head = 0, u, v, tmp, *m_stack = new int[size*2], from, to;
+	// get an ordered sequence start from 0
+	int *idx = ordered_sequence<int>(size);
+	
+	// check argument
+	if (asc != 1 && asc != -1) {
+		std::cerr << "The third arguments must be +1 or -1. +1 means ascent, -1 means descent." << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	// if array size is too small, just return idx
+	if (size <= 1) return idx;
+
+	// quick sort
+	m_stack[st_head++] = 0;
+	m_stack[st_head++] = size;
+	while (st_head != 0) {
+		from = m_stack[st_head - 2];
+		to = m_stack[st_head - 1];
+		st_head -= 2;
+
+		if (to - from <= 1) continue;
+		u = from + 1;
+		v = to - 1;
+		while (u <= v) {
+			while (u <= v && asc*arr[idx[u]] <= asc*arr[idx[from]]) u++;
+			while (u <= v && asc*arr[idx[v]] >= asc*arr[idx[from]]) v--;
+			if (u <= v) {
+				tmp = idx[u]; idx[u] = idx[v]; idx[v] = tmp;
+			}
+			
+		}
+		tmp = idx[from]; idx[from] = idx[v]; idx[v] = tmp;
+		
+		// push left part to stack
+		m_stack[st_head++] = from;
+		m_stack[st_head++] = v;
+		// push right part to stack
+		m_stack[st_head++] = u;
+		m_stack[st_head++] = to;
+	}
+
+	delete[] m_stack;
+	return idx;
+}
 #endif /*UTIL_H_*/
