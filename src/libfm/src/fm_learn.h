@@ -89,6 +89,14 @@ class fm_learn {
 			}
 		}
 
+		double inner_prod(double **v, int rows, int c1, int c2) {
+			double ret = 0;
+			for (int i = 0; i < rows; i++) {
+				ret += v[i][c1] * v[i][c2];
+			}
+			return fabs(ret);
+		}
+
 	public:
 		virtual void learn(Data& train, Data& test) { }
 		
@@ -98,6 +106,27 @@ class fm_learn {
 			std::cout << "task=" << task << std::endl;
 			std::cout << "min_target=" << min_target << std::endl;
 			std::cout << "max_target=" << max_target << std::endl;		
+		}
+
+		void feature_selection_2dim() {
+			FILE *fp = fopen("importance.feature_2d", "w");
+			int k_dim, n_dim;
+			double** v = fm->v.value;
+			k_dim = fm->v.dim1;
+			n_dim = fm->v.dim2;
+
+			double* v_sum;
+			v_sum = new double[(1+n_dim)*n_dim/2];
+			int counts = 0;
+			for (int i = 0; i < n_dim; i++) {
+				for (int j = i; j < n_dim; j++) {
+					v_sum[counts] = inner_prod(v, k_dim, i, j);
+					fprintf(fp, "%lf\t%d\t%d\n", v_sum[counts], i, j);
+					counts++;
+				}
+			}
+			delete[] v_sum;
+			fclose(fp);
 		}
 
 	protected:
