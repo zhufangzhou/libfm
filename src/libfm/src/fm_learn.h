@@ -129,7 +129,7 @@ class fm_learn {
 
 			int counts = 0;
 			for (int i = 0; i < n_dim; i++) {
-				for (int j = i; j < n_dim; j++) {
+				for (int j = i+1; j < n_dim; j++) {
 					v_sum[counts] = inner_prod(v, k_dim, i, j);
 					idx_list[counts*2] = i;
 					idx_list[counts*2+1] = j;
