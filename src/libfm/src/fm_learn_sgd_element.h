@@ -41,13 +41,14 @@ class fm_learn_sgd_element: public fm_learn_sgd {
 		}
 		virtual void learn(Data& train, Data& test) {
 			fm_learn_sgd::learn(train, test);
+			int j = 0;
 
 			std::cout << "SGD: DON'T FORGET TO SHUFFLE THE ROWS IN TRAINING DATA TO GET THE BEST RESULTS." << std::endl; 
 			// SGD
 			for (int i = 0; i < num_iter; i++) {
-			
 				double iteration_time = getusertime();
 				for (train.data->begin(); !train.data->end(); train.data->next()) {
+					j++;
 					
 					double p = fm->predict(train.data->getRow(), sum, sum_sqr);
 					double mult = 0;

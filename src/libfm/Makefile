@@ -9,10 +9,10 @@ all: libFM transpose convert
 
 libFM: libfm.o
 	mkdir -p $(BIN_DIR)
-	g++ -O3 -Wall libfm.o -o $(BIN_DIR)libFM
+	g++ -g -Wall libfm.o -o $(BIN_DIR)libFM
 
 %.o: %.cpp
-	g++ -O3 -Wall -c $< -o $@
+	g++ -g -Wall -c $< -o $@
 
 clean:	clean_lib
 	mkdir -p $(BIN_DIR)

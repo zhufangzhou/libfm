@@ -1,3 +1,4 @@
 date
-./libFM -task c -train train.libfm -test emptyfile -dim '0,0,8' -iter 100 -imp_file importance.feature_2d
+./libFM -task c -train train_10.libfm -test train_10.libfm -dim '0,0,8' -iter 100 -imp_file importance_2000.feature_2d -method sgd -learn_rate 0.01 -regular '0,0,0.01' -init_stdev 0.01
+#./libFM -task c -train train_2000.libfm -test train_2000.libfm -dim '0,0,8' -iter 100 -imp_file importance_2000.feature_2d 
 date
